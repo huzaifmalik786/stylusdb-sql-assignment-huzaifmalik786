@@ -1,27 +1,27 @@
 const readCSV = require('../../src/csvReader');
-const parseQuery = require('../../src/queryParser');
+const { parseQuery } = require('../../src/queryParser');
 const executeSELECTQuery = require('../../src/index');
 
 test('Read CSV File', async () => {
     const data = await readCSV('./student.csv');
     expect(data.length).toBeGreaterThan(0);
-    expect(data.length).toBe(3);
+    expect(data.length).toBe(4);
     expect(data[0].name).toBe('John');
-    expect(data[0].age).toBe('30'); //ignore the string type here, we will fix this later
+    expect(data[0].age).toBe('30');
 });
 
 test('Parse SQL Query', () => {
-    const query = 'SELECT student.name, enrollment.course FROM student INNER JOIN enrollment ON student.id=enrollment.student_id';
+    const query = 'SELECT id, name FROM student';
     const parsed = parseQuery(query);
     expect(parsed).toEqual({
-        fields: ["student.name", "enrollment.course"],
-        table: "student",
+        fields: ['id', 'name'],
+        table: 'student',
         whereClauses: [],
-        joinTable: "enrollment",
-        joinCondition: {
-            left: "student.id",
-            right: "enrollment.student_id"
-        }
+        joinCondition: null,
+        joinTable: null,
+        joinType: null,
+        groupByFields: null,
+        hasAggregateWithoutGroupBy: false,
     });
 });
 
@@ -36,21 +36,21 @@ test('Execute SQL Query', async () => {
 });
 
 test('Parse SQL Query with WHERE Clause', () => {
-    const query = 'SELECT student.name, enrollment.course FROM student INNER JOIN enrollment ON student.id=enrollment.student_id WHERE student.name = John';
+    const query = 'SELECT id, name FROM student WHERE age = 25';
     const parsed = parseQuery(query);
     expect(parsed).toEqual({
-        "fields": ["student.name", "enrollment.course"],
-        "table": "student",
-        "whereClauses": [{
-            "field": "student.name",
+        fields: ['id', 'name'],
+        table: 'student',
+        whereClauses: [{
+            "field": "age",
             "operator": "=",
-            "value": "John"
+            "value": "25",
         }],
-        "joinTable": "enrollment",
-        "joinCondition": {
-            "left": "student.id",
-            "right": "enrollment.student_id"
-        }
+        joinCondition: null,
+        joinTable: null,
+        joinType: null,
+        groupByFields: null,
+        hasAggregateWithoutGroupBy: false,
     });
 });
 
@@ -64,25 +64,29 @@ test('Execute SQL Query with WHERE Clause', async () => {
 });
 
 test('Parse SQL Query with Multiple WHERE Clauses', () => {
-    const query = 'SELECT student.name, enrollment.course FROM student INNER JOIN enrollment ON student.id=enrollment.student_id WHERE student.name = John';
+    const query = 'SELECT id, name FROM student WHERE age = 30 AND name = John';
     const parsed = parseQuery(query);
     expect(parsed).toEqual({
-        "fields": ["student.name", "enrollment.course"],
-        "table": "student",
-        "whereClauses": [{
-            "field": "student.name",
+        fields: ['id', 'name'],
+        table: 'student',
+        whereClauses: [{
+            "field": "age",
             "operator": "=",
-            "value": "John"
+            "value": "30",
+        }, {
+            "field": "name",
+            "operator": "=",
+            "value": "John",
         }],
-        "joinTable": "enrollment",
-        "joinCondition": {
-            "left": "student.id",
-            "right": "enrollment.student_id"
-        }
+        joinCondition: null,
+        joinTable: null,
+        joinType: null,
+        groupByFields: null,
+        hasAggregateWithoutGroupBy: false,
     });
 });
 
-test('Execute SQL Query with Multiple WHERE Clause', async () => {
+test('Execute SQL Query with Complex WHERE Clause', async () => {
     const query = 'SELECT id, name FROM student WHERE age = 30 AND name = John';
     const result = await executeSELECTQuery(query);
     expect(result.length).toBe(1);
