@@ -83,8 +83,12 @@ function createResultRow(mainRow, joinRow, fields, table, includeAllMainFields) 
 }
 
 async function executeSELECTQuery(query) {
-    const { fields, table, whereClauses, joinType, joinTable, joinCondition, groupByFields, hasAggregateWithoutGroupBy, orderByFields } = parseQuery(query);
+    const { fields, table, whereClauses, joinType, joinTable, joinCondition, groupByFields, hasAggregateWithoutGroupBy, orderByFields, limit } = parseQuery(query);
     let data = await readCSV(`${table}.csv`);
+
+    if (limit !== null) {
+        data = data.slice(0, limit);
+    }
 
     // Perform INNER JOIN if specified
     if (joinTable && joinCondition) {
