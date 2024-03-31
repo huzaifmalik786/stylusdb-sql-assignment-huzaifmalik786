@@ -5,6 +5,21 @@ function parseQuery(query) {
     // Trim the query to remove any leading/trailing whitespaces
     query = query.trim();
 
+    // Updated regex to capture ORDER BY clause
+    const orderByRegex = /\sORDER BY\s(.+)/i;
+    const orderByMatch = query.match(orderByRegex);
+
+    let orderByFields = null;
+    if (orderByMatch) {
+        orderByFields = orderByMatch[1].split(',').map(field => {
+            const [fieldName, order] = field.trim().split(/\s+/);
+            return { fieldName, order: order ? order.toUpperCase() : 'ASC' };
+        });
+    }
+
+    // Remove ORDER BY clause from the query for further processing
+    query = query.replace(orderByRegex, '');
+
     // Split the query at the GROUP BY clause if it exists
     const groupBySplit = query.split(/\sGROUP BY\s/i);
     const queryWithoutGroupBy = groupBySplit[0]; // Everything before GROUP BY clause
@@ -53,7 +68,8 @@ function parseQuery(query) {
         joinTable,
         joinCondition,
         groupByFields,
-        hasAggregateWithoutGroupBy
+        hasAggregateWithoutGroupBy,
+        orderByFields
     };
 }
 
