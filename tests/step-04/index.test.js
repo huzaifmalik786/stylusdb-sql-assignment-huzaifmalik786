@@ -23,6 +23,7 @@ test('Parse SQL Query', () => {
         limit: null,
         orderByFields: null,
         groupByFields: null,
+        isDistinct: false,
         hasAggregateWithoutGroupBy: false,
         joinCondition: {
             left: "student.id",

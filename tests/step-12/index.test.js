@@ -1,5 +1,5 @@
 const readCSV = require('../../src/csvReader');
-const {parseQuery, parseJoinClause} = require('../../src/queryParser');
+const { parseQuery, parseJoinClause } = require('../../src/queryParser');
 const executeSELECTQuery = require('../../src/index');
 
 test('Read CSV File', async () => {
@@ -269,6 +269,7 @@ test('Parse SQL Query', () => {
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -290,6 +291,7 @@ test('Parse SQL Query with WHERE Clause', () => {
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -315,6 +317,7 @@ test('Parse SQL Query with Multiple WHERE Clauses', () => {
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -332,6 +335,7 @@ test('Parse SQL Query with INNER JOIN', async () => {
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     })
 });
@@ -349,6 +353,7 @@ test('Parse SQL Query with INNER JOIN and WHERE Clause', async () => {
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     })
 });
@@ -408,6 +413,7 @@ test('Parse LEFT Join Query Completely', () => {
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     })
 })
@@ -425,6 +431,7 @@ test('Parse LEFT Join Query Completely', () => {
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     })
 })
@@ -442,6 +449,7 @@ test('Parse SQL Query with LEFT JOIN with a WHERE clause filtering the main tabl
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -459,6 +467,7 @@ test('Parse SQL Query with LEFT JOIN with a WHERE clause filtering the join tabl
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -476,6 +485,7 @@ test('Parse SQL Query with RIGHT JOIN with a WHERE clause filtering the main tab
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -493,6 +503,7 @@ test('Parse SQL Query with RIGHT JOIN with a WHERE clause filtering the join tab
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -511,6 +522,7 @@ test('Parse COUNT Aggregate Query', () => {
         "joinTable": null,
         "joinType": null,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -529,6 +541,7 @@ test('Parse SUM Aggregate Query', () => {
         "joinTable": null,
         "joinType": null,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -546,6 +559,7 @@ test('Parse AVG Aggregate Query', () => {
         "joinTable": null,
         "joinType": null,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -563,6 +577,7 @@ test('Parse MIN Aggregate Query', () => {
         "joinTable": null,
         "joinType": null,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -580,6 +595,7 @@ test('Parse MAX Aggregate Query', () => {
         "joinTable": null,
         "joinType": null,
         "orderByFields": null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -597,6 +613,7 @@ test('Parse basic GROUP BY query', () => {
         joinCondition: null,
         hasAggregateWithoutGroupBy: false,
         orderByFields: null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -614,6 +631,7 @@ test('Parse GROUP BY query with WHERE clause', () => {
         joinCondition: null,
         hasAggregateWithoutGroupBy: false,
         orderByFields: null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -631,6 +649,7 @@ test('Parse GROUP BY query with multiple fields', () => {
         joinCondition: null,
         hasAggregateWithoutGroupBy: false,
         orderByFields: null,
+        isDistinct: false,
         "limit": null
     });
 });
@@ -651,6 +670,7 @@ test('Parse GROUP BY query with JOIN and WHERE clauses', () => {
         },
         hasAggregateWithoutGroupBy: false,
         orderByFields: null,
+        isDistinct: false,
         "limit": null,
     });
 });
