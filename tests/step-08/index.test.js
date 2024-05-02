@@ -1,6 +1,7 @@
-const readCSV = require('../../src/csvReader');
-const { parseQuery } = require('../../src/queryParser');
-const executeSELECTQuery = require('../../src/index');
+
+const { readCSV } = require('../../src/csvReader');
+const { parseSelectQuery } = require('../../src/queryParser');
+const { executeSELECTQuery } = require('../../src/index');
 
 test('Read CSV File', async () => {
     const data = await readCSV('./student.csv');
@@ -12,19 +13,19 @@ test('Read CSV File', async () => {
 
 test('Parse SQL Query', () => {
     const query = 'SELECT id, name FROM student';
-    const parsed = parseQuery(query);
+    const parsed = parseSelectQuery(query);
     expect(parsed).toEqual({
         fields: ['id', 'name'],
         table: 'student',
         whereClauses: [],
         joinCondition: null,
         joinTable: null,
-        limit: null,
-        isDistinct: false,
-        orderByFields: null,
         joinType: null,
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
+        orderByFields: null,
+        limit: null,
+        isDistinct: false
     });
 });
 
@@ -40,7 +41,7 @@ test('Execute SQL Query', async () => {
 
 test('Parse SQL Query with WHERE Clause', () => {
     const query = 'SELECT id, name FROM student WHERE age = 25';
-    const parsed = parseQuery(query);
+    const parsed = parseSelectQuery(query);
     expect(parsed).toEqual({
         fields: ['id', 'name'],
         table: 'student',
@@ -51,12 +52,12 @@ test('Parse SQL Query with WHERE Clause', () => {
         }],
         joinCondition: null,
         joinTable: null,
-        limit: null,
-        isDistinct: false,
-        orderByFields: null,
         joinType: null,
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
+        orderByFields: null,
+        limit: null,
+        isDistinct: false
     });
 });
 
@@ -71,7 +72,7 @@ test('Execute SQL Query with WHERE Clause', async () => {
 
 test('Parse SQL Query with Multiple WHERE Clauses', () => {
     const query = 'SELECT id, name FROM student WHERE age = 30 AND name = John';
-    const parsed = parseQuery(query);
+    const parsed = parseSelectQuery(query);
     expect(parsed).toEqual({
         fields: ['id', 'name'],
         table: 'student',
@@ -86,12 +87,12 @@ test('Parse SQL Query with Multiple WHERE Clauses', () => {
         }],
         joinCondition: null,
         joinTable: null,
-        limit: null,
-        isDistinct: false,
-        orderByFields: null,
         joinType: null,
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
+        orderByFields: null,
+        limit: null,
+        isDistinct: false
     });
 });
 
@@ -118,40 +119,39 @@ test('Execute SQL Query with Not Equal to', async () => {
 
 test('Parse SQL Query with INNER JOIN', async () => {
     const query = 'SELECT student.name, enrollment.course FROM student INNER JOIN enrollment ON student.id=enrollment.student_id';
-    const result = await parseQuery(query);
+    const result = await parseSelectQuery(query);
     expect(result).toEqual({
         fields: ['student.name', 'enrollment.course'],
         table: 'student',
         whereClauses: [],
         joinTable: 'enrollment',
-        limit: null,
-        isDistinct: false,
-        orderByFields: null,
         joinType: "INNER",
         joinCondition: { left: 'student.id', right: 'enrollment.student_id' },
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
+        orderByFields: null,
+        limit: null,
+        isDistinct: false
     })
 });
 
 test('Parse SQL Query with INNER JOIN and WHERE Clause', async () => {
     const query = 'SELECT student.name, enrollment.course FROM student INNER JOIN enrollment ON student.id = enrollment.student_id WHERE student.age > 20';
-    const result = await parseQuery(query);
+    const result = await parseSelectQuery(query);
     expect(result).toEqual({
         fields: ['student.name', 'enrollment.course'],
         table: 'student',
         whereClauses: [{ field: 'student.age', operator: '>', value: '20' }],
         joinTable: 'enrollment',
-        limit: null,
-        isDistinct: false,
-        orderByFields: null,
         joinType: "INNER",
         joinCondition: { left: 'student.id', right: 'enrollment.student_id' },
         groupByFields: null,
         hasAggregateWithoutGroupBy: false,
+        orderByFields: null,
+        limit: null,
+        isDistinct: false
     })
 });
-
 
 test('Execute SQL Query with INNER JOIN', async () => {
     const query = 'SELECT student.name, enrollment.course FROM student INNER JOIN enrollment ON student.id=enrollment.student_id';
@@ -172,12 +172,25 @@ test('Execute SQL Query with INNER JOIN', async () => {
     }));
 });
 
-
 test('Execute SQL Query with INNER JOIN and a WHERE Clause', async () => {
     const query = 'SELECT student.name, enrollment.course, student.age FROM student INNER JOIN enrollment ON student.id = enrollment.student_id WHERE student.age > 25';
     const result = await executeSELECTQuery(query);
-
+    /*
+    result =  [
+      {
+        'student.name': 'John',
+        'enrollment.course': 'Mathematics',
+        'student.age': '30'
+      },
+      {
+        'student.name': 'John',
+        'enrollment.course': 'Physics',
+        'student.age': '30'
+      }
+    ]
+    */
     expect(result.length).toEqual(2);
+    // toHaveProperty is not working here due to dot in the property name
     expect(result[0]).toEqual(expect.objectContaining({
         "enrollment.course": "Mathematics",
         "student.name": "John"
